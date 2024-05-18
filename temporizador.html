@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temporizador</title>
+<style>
+  .timer {
+    font-size: 24px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div>
+  <label for="hours">Horas:</label>
+  <input type="number" id="hours" min="0" value="0">
+</div>
+<div>
+  <label for="minutes">Minutos:</label>
+  <input type="number" id="minutes" min="0" max="59" value="0">
+</div>
+<div>
+  <label for="seconds">Segundos:</label>
+  <input type="number" id="seconds" min="0" max="59" value="0">
+</div>
+<br>
+<div class="timer" id="timer">00:00:00</div>
+
+<audio id= 'beep'>
+  <source src="C:\Users\ferna\temporizador\audio\race-start-beeps-125125.mp3" type="audio/mp3">
+</audio>
+
+<script>
+  var seconds = 0;
+  var minutes = 0;
+  var hours = 0;
+  var timerInterval;
+  var remainingTime = 0;
+
+  function startTimer() {
+    hours = parseInt(document.getElementById('hours').value);
+    minutes = parseInt(document.getElementById('minutes').value);
+    seconds = parseInt(document.getElementById('seconds').value);
+
+    if (remainingTime === 0) {
+      remainingTime = hours * 3600 + minutes * 60 + seconds;
+    }
+
+    timerInterval = setInterval(updateTimer, 1000);
+    document.getElementById('startBtn').disabled = true;
+    document.getElementById('stopBtn').disabled = false;
+  }
+
+  function updateTimer() {
+    if (remainingTime == 0) {
+      clearInterval(timerInterval);
+      <!--alert("Tempo esgotado!");-->
+      document.getElementById('beep').play();             
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('stopBtn').disabled = true;
+      return;
+    }
+
+    remainingTime--;
+
+    hours = Math.floor(remainingTime / 3600);
+    minutes = Math.floor((remainingTime % 3600) / 60);
+    seconds = remainingTime % 60;
+
+    document.getElementById('timer').innerText = 
+      (hours < 10 ? "0" + hours : hours) + ":" +
+      (minutes < 10 ? "0" + minutes : minutes) + ":" +
+      (seconds < 10 ? "0" + seconds : seconds);
+  }
+
+  function stopTimer() {
+    clearInterval(timerInterval);
+    remainingTime = hours * 3600 + minutes * 60 + seconds;
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = true;
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    document.getElementById('hours').value = 0;
+    document.getElementById('minutes').value = 0;
+    document.getElementById('seconds').value = 0;
+    document.getElementById('timer').innerText = '00:00:00';
+    remainingTime = 0;
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = true;
+  }
+</script>
+
+<button id="startBtn" onclick="startTimer()">Iniciar</button>
+<button id="stopBtn" onclick="stopTimer()" disabled>Parar</button>
+<button onclick="resetTimer()">Resetar</button>
+
+</body>
+</html>
+
